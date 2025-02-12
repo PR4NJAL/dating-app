@@ -20,3 +20,5 @@ dist-ssr
 *.sw?
 
 public
+Pipfile
+Pipfile.lock
