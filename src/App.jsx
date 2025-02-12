@@ -1,123 +1,206 @@
 import { useState, useContext, createContext } from "react";
-import { BadgePercent, Sparkle, Gem, Crown, ArrowRight } from "lucide-react";
 
 const CheckboxContext = createContext();
 
-function Checkbox({ children, ...props }) {
-  const { selectedPlans, togglePlan } = useContext(CheckboxContext);
+function Choice({ children, ...props }) {
+  const { selectedItems, toggleItem } = useContext(CheckboxContext);
   return (
-    <label className={`
-      px-6 py-4 shadow rounded-lg cursor-pointer transition-all
-      ${selectedPlans.includes(props.value) 
-        ? "bg-gradient-to-t from-violet-200 to-violet-100 text-violet-800 shadow-violet-500 scale-105" 
-        : "bg-white hover:shadow-md shadow-gray-300"
-      }
-    `}>
-      <input 
-        type="checkbox" 
-        className="hidden" 
-        checked={selectedPlans.includes(props.value)}
-        onChange={() => togglePlan(props.value)} 
-        {...props} 
-      />
-      {children}
-    </label>
+    <div
+      onClick={() => toggleItem(props.value)}
+      className={`
+        cursor-pointer transition-all duration-300 ease-in-out
+        p-6 rounded-xl text-center min-h-[100px] flex items-center justify-center
+        backdrop-blur-md
+        ${selectedItems.includes(props.value)
+          ? "bg-gradient-to-r from-red-500/90 via-red-600/90 to-red-500/90 text-white shadow-lg shadow-red-200/50 scale-105"
+          : "bg-gradient-to-r from-white/60 to-red-50/60 hover:to-red-100/60 text-gray-700 hover:text-red-800 shadow-lg hover:shadow-xl"
+        }
+        border border-white/20 max-w-2xl mx-auto w-full
+      `}
+    >
+      <p className="font-medium text-lg">{children}</p>
+    </div>
   );
 }
 
-function CheckboxGroup({ selectedPlans, onToggle, children }) {
+function ChoiceGroup({ selectedItems, onToggle, children }) {
   return (
-    <CheckboxContext.Provider value={{ selectedPlans, togglePlan: onToggle }}>
+    <CheckboxContext.Provider value={{ selectedItems, toggleItem: onToggle }}>
       {children}
     </CheckboxContext.Provider>
   );
 }
 
-function Plan({ icon, title, features, price }) {
-  return (
-    <div className="flex gap-4 items-center">
-      {icon}
-      <div>
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="text-sm">{features.join(" · ")}</p>
-      </div>
-      <span className="ml-auto font-medium">${price}</span>
-    </div>
-  );
-}
+const questions = [
+  "Visited Nirvana With Member Of Preferred Gender",
+  "Waited In Front Of Memebr Of Preferred Gender Hostel",
+  "Been In A Relationship In Thapar",
+  "Dated A Senior",
+  "Dated A Junior",
+  "Dated A Person In Society",
+  "Been Initmate With The Person In Society",
+  "Been Blacked Out Drunk In Elevate/LA",
+  "Had Sex in CSED",
+  "Made Out At Library Back Stairs",
+  "Made Out in Nirvana",
+  "Gone Out On A Date on Mantu",
+  "Gave A Lab Eval High/Drunk",
+  "Smoked/Drank While In Lecture",
+  "Made Out In Library CSED Lift",
+  "Kisssed On Saturnalia",
+  "Hooked Up At Saturnalia",
+  "Had A Fling/Hookup With Member Of Preffered Gender From Another UNI, Visiting Due To An Event",
+  "Had Sex With A PHD Student",
+  "Dry Humped On A Skywalk",
+  "Went On A Date Within 1st Month Of College",
+  "Had An Auxi In First Year",
+  "Had A Fling In Summer Sem",
+  "Caught By A Guard Or Ashish Purohit While Intimate",
+  "Did Something CRAZY in Lecture/Lab",
+  "Went On A Date At TSLA's",
+  "Made Out At TSLA's",
+  "Had A Crush On A Biotech/TSLA Girl",
+  "Had A House Party At Chandigarh",
+  "Impromptu Plan To Kasoli",
+  "Had A Hookup While Clubbing in Chd/Patiala",
+  "Had A Hookup At LA",
+  "Been Detained",
+  "Made Out In B Block",
+  "Had A Quickie In CSED Washroom",
+  "Had A Quicki In JAGGI Washroom",
+  "Recieved Oral on Campus",
+  "Gave Oral on Campus",
+  "Recieved Oral At Nirvana/Skywalk",
+  "Gave Oral At Niravana/Skywalk",
+  "Had Sex With Ms/Mr IZHAAR",
+  "Had Sex/Made Out In OAT Washroom",
+  "Had Sex/Made Out In CR Rooms",
+  "Fondled With Homies Tits",
+  "Hooked Up With Your Society Senior",
+  "Hooked Up With Your Society Junior",
+  "Went To Skywalk For The Sole Purpose Of Staring At Girls",
+  "Have You Gone To Kasol, For The Purpose Of Weed",
+  "Got Caught By Caretaker For Smoking/Alcohol",
+  "Got Caught By Caretaker For Weed",
+  "After MST Mandatory Party?",
+  "Gave/Recieved Hickey In Nirvana",
+  "Had Sex During Night Permi",
+  "Had A Drink With Caretaker",
+  "Saw Hurds High/Drunk",
+  "Had A Sneak In Other Sex Hostel",
+  "Have ou Ever Been Called To The DOSAA Office",
+  "Made Out In LT",
+  "Made Out In LT",
+  "Ever Smoked Weed In Nature Park",
+  "Ever Gone On An Elysian Date",
+  "Held Hands During A Lecture",
+  "Faked A Medical Report For An Exam/Eval",
+  "Booked A Hotel In Patiala",
+  "Had Intimacy With Same Sex in Hostel",
+  "Got Judged By Mangla Aunty",
+  "Wrapchik Date",
+  "JAGGI Coffee Date",
+  "Hooked Up With A PECFEST Chick",
+  ".",
+  "Gone To Vakhra For Sutta",
+  "TSLA's 1st Floor Makeout",
+  "Admitted To Manipal Hospital",
+  "Auxi In Every Sem",
+  "Attended Some Else Class Cuz You Liked Member Of Preferred Gender",
+  "Ever Gone On Rooftop Of Faculty Residential Area",
+  "Lap Dance In Hostel",
+  "Been Beaten On Birthday",
+  "Beaten Someone On Birthday",
+  "JAGGI Coffee Drink",
+  "Aura Down, Entry Lock Not Open",
+  "Late Entry College",
+  "Sneaked In On Another Years TFF",
+  "Got Fucked In The Ass By Maths-1",
+  "Thought Of Applying As During Placements",
+  "Made Out At A FROSH Event",
+  "Hostel-J",
+  "Auditorium",
+  "Kabir",
+  "La Pino's Monster Pizaa",
+  "TSE Trip"
+].map((text, index) => ({ id: index + 1, text }));
+
 
 export default function App() {
-  const [selectedPlans, setSelectedPlans] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showScore, setShowScore] = useState(false);
 
-  const togglePlan = (plan) => {
-    setSelectedPlans(prev => 
-      prev.includes(plan)
-        ? prev.filter(p => p !== plan)
-        : [...prev, plan]
+  const toggleItem = (itemId) => {
+    setSelectedItems(prev => 
+      prev.includes(itemId)
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
     );
   };
 
-  const getButtonText = () => {
-    if (selectedPlans.length === 0) return "Select a plan";
-    if (selectedPlans.length === 1) return `Proceed with ${selectedPlans[0]} plan`;
-    return `Proceed with ${selectedPlans.length} plans`;
+  const calculatePurity = () => {
+    return 100 - selectedItems.length;
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
-      <h2 className="text-2xl font-bold tracking-tight">Choose Your Plans</h2>
-      <hr className="my-3 w-56" />
-      <CheckboxGroup selectedPlans={selectedPlans} onToggle={togglePlan}>
-        <div className="flex gap-4 justify-center flex-col">
-          <Checkbox value="Free">
-            <Plan 
-              icon={<BadgePercent />} 
-              title="Free" 
-              features={["SD (480p)", "Mobile", "Ads"]} 
-              price={0}
-            />
-          </Checkbox>
-          <Checkbox value="Basic">
-            <Plan 
-              icon={<Sparkle />} 
-              title="Basic" 
-              features={["HD (720p)", "Mobile", "Ads"]} 
-              price={0}
-            />
-          </Checkbox>
-          <Checkbox value="Standard">
-            <Plan 
-              icon={<Gem />} 
-              title="Standard" 
-              features={["SD (480p)", "Mobile", "Ads"]} 
-              price={0}
-            />
-          </Checkbox>
-          <Checkbox value="Premium">
-            <Plan 
-              icon={<Crown />} 
-              title="Premium" 
-              features={["SD (480p)", "Mobile", "Ads"]} 
-              price={0}
-            />
-          </Checkbox>
+    <main className="min-h-screen relative bg-gradient-to-br from-red-50 via-white to-red-100">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,0,0,0.1),rgba(255,255,255,0)_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,0,0,0.05),rgba(255,255,255,0)_35%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:14px_24px]" />
+
+      <div className="relative max-w-4xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-red-600 to-red-800 text-transparent bg-clip-text mb-4">
+            Thapar Purity Test
+          </h1>
+          <br></br>
+          <h2 className="text-gray-600 text-lg">Caution: This is not a bucket list. Completion of all items on this test will likely result in expulsion.</h2>
+          <br></br>
+          <p className="text-gray-600 text-lg">Select all that apply to you</p>
         </div>
-      </CheckboxGroup>
-      <hr className="my-3 w-56" />
-      <button 
-        className={`
-          flex gap-4 items-center px-6 py-3 rounded-lg 
-          ${selectedPlans.length > 0 
-            ? "bg-violet-800 hover:bg-violet-700" 
-            : "bg-violet-400 cursor-not-allowed"
-          }
-          font-semibold text-lg text-white
-        `}
-        disabled={selectedPlans.length === 0}
-      >
-        {getButtonText()}
-        <ArrowRight />
-      </button>
+
+        {showScore && (
+          <div className="mb-12 transform transition-all duration-500 ease-out">
+            <div className="p-8 rounded-2xl bg-gradient-to-r from-red-600/90 to-red-800/90 text-white text-center backdrop-blur-md border border-white/20 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold mb-6">Your Purity Score</h2>
+              <div className="text-8xl font-bold mb-4">{calculatePurity()}%</div>
+              <p className="text-xl opacity-90">
+                {calculatePurity() > 90 ? "Pure as fresh snow ❄️" : 
+                 calculatePurity() > 70 ? "Mostly innocent 😇" :
+                 calculatePurity() > 50 ? "Living life to the fullest 🌟" :
+                 "You've seen it all 😎"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <ChoiceGroup selectedItems={selectedItems} onToggle={toggleItem}>
+          <div className="flex flex-col space-y-4">
+            {questions.map((question) => (
+              <Choice key={question.id} value={question.id}>
+                {question.text}
+              </Choice>
+            ))}
+          </div>
+        </ChoiceGroup>
+
+        <div className="mt-12 flex justify-center">
+          <button 
+            onClick={() => setShowScore(true)}
+            className="
+              px-12 py-4 rounded-xl font-semibold text-lg
+              bg-gradient-to-r from-red-600/90 to-red-800/90 
+              hover:from-red-700/90 hover:to-red-900/90
+              text-white shadow-lg shadow-red-200/50
+              transform transition-all duration-300
+              hover:scale-105 hover:shadow-xl
+              backdrop-blur-md border border-white/20
+            "
+          >
+            Calculate My Score
+          </button>
+        </div>
+      </div>
     </main>
   );
 }
