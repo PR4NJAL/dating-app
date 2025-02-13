@@ -1,4 +1,5 @@
 import { useState, useContext, createContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CheckboxContext = createContext();
 
@@ -127,7 +128,7 @@ const questions = [
 
 export default function Questions() {
   const [selectedItems, setSelectedItems] = useState([]);
-  const [showScore, setShowScore] = useState(false);
+  const navigate = useNavigate();
 
   const toggleItem = (itemId) => {
     setSelectedItems(prev => 
@@ -137,8 +138,9 @@ export default function Questions() {
     );
   };
 
-  const calculatePurity = () => {
-    return 100 - selectedItems.length;
+  const handleCalculateScore = () => {
+    const score = 100 - selectedItems.length;
+    navigate(`/results?score=${score}`);
   };
 
   return (
@@ -158,21 +160,6 @@ export default function Questions() {
           <p className="text-gray-600 text-lg">Select all that apply to you</p>
         </div>
 
-        {showScore && (
-          <div className="mb-12 transform transition-all duration-500 ease-out">
-            <div className="p-8 rounded-2xl bg-gradient-to-r from-red-600/90 to-red-800/90 text-white text-center backdrop-blur-md border border-white/20 max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6">Your Purity Score</h2>
-              <div className="text-8xl font-bold mb-4">{calculatePurity()}%</div>
-              <p className="text-xl opacity-90">
-                {calculatePurity() > 90 ? "Pure as fresh snow ❄️" : 
-                 calculatePurity() > 70 ? "Mostly innocent 😇" :
-                 calculatePurity() > 50 ? "Living life to the fullest 🌟" :
-                 "You've seen it all 😎"}
-              </p>
-            </div>
-          </div>
-        )}
-
         <ChoiceGroup selectedItems={selectedItems} onToggle={toggleItem}>
           <div className="flex flex-col space-y-4">
             {questions.map((question) => (
@@ -185,7 +172,7 @@ export default function Questions() {
 
         <div className="mt-12 flex justify-center">
           <button 
-            onClick={() => setShowScore(true)}
+            onClick={handleCalculateScore}
             className="
               px-12 py-4 rounded-xl font-semibold text-lg
               bg-gradient-to-r from-red-600/90 to-red-800/90 
