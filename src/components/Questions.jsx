@@ -123,7 +123,16 @@ const questions = [
   "Auditorium",
   "Kabir",
   "La Pino's Monster Pizaa",
-  "TSE Trip"
+  "TSE Trip",
+  ".",
+  ".",
+  ".",
+  ".",
+  ".",
+  ".",
+  ".",
+  ".",
+  ".",
 ].map((text, index) => ({ id: index + 1, text }));
 
 export default function Questions() {
