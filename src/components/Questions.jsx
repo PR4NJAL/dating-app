@@ -132,11 +132,12 @@ const questions = [
   ".",
   ".",
   ".",
-  ".",
+  "."
 ].map((text, index) => ({ id: index + 1, text }));
 
 export default function Questions() {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [answers, setAnswers] = useState(new Array(100).fill(0)); // Array of 100 zeros
   const navigate = useNavigate();
 
   const toggleItem = (itemId) => {
@@ -145,11 +146,30 @@ export default function Questions() {
         ? prev.filter(id => id !== itemId)
         : [...prev, itemId]
     );
+
+    setAnswers(prevAnswers => {
+      const newAnswers = [...prevAnswers];
+      newAnswers[itemId - 1] = newAnswers[itemId - 1] === 0 ? 1 : 0;
+      return newAnswers;
+    });
   };
 
-  const handleCalculateScore = () => {
+  const handleCalculateScore = async () => {
     const score = 100 - selectedItems.length;
-    navigate(`/results?score=${score}`);
+
+    try {
+      await fetch("http://localhost:8000/api/datingapp_backend/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ answers: selectedItems })
+      });
+      navigate(`/results?score=${score}`);
+    } catch (error) {
+      console.error("Error saving answers:", error);
+      navigate(`/results?score=${score}`);
+    }
   };
 
   return (
