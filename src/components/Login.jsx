@@ -144,6 +144,7 @@ export default function Login() {
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
+                        autoComplete="current-password"
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
                         placeholder="Enter your password"
                         required
