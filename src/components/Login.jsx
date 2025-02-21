@@ -1,21 +1,48 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import authService from "../config/authService";
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
-    name: ""
+    password2: "",
+    username: "",
+    first_name: "",
+    last_name: "",
   });
+
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your authentication logic here
-    console.log("Form submitted:", formData);
-    navigate("/questions"); // Navigate to purity test after login
+    setError("");
+
+    try {
+      if (isLogin) {
+        await authService.login(formData.email, formData.password);
+      } else {
+        if (formData.password !== formData.password2) {
+          setError("Passwords do not match");
+          return;
+        }
+        await  authService.register({
+          email: formData.email,
+          password2: formData.password2,
+          password: formData.password,
+          username: formData.username,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+        });
+
+        await authService.login(formData.email, formData.password);
+      }
+      navigate("/questions");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -43,72 +70,104 @@ export default function Login() {
             </h1>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {!isLogin && (
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
-                    placeholder="Enter your full name"
-                    required={!isLogin}
-                  />
-                </div>
-              )}
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {!isLogin && (
+                    <>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          name="username"
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                          placeholder="Enter your username"
+                          required
+                        />
+                      </div>
 
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">
+                          First Name
+                        </label>
+                        <input
+                          type="text"
+                          name="first_name"
+                          value={formData.first_name}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                          placeholder="Enter your first name"
+                          required
+                        />
+                      </div>
 
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">
+                          Last Name
+                        </label>
+                        <input
+                          type="text"
+                          name="last_name"
+                          value={formData.last_name}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                          placeholder="Enter your last name"
+                          required
+                        />
+                      </div>
+                    </>
+                    )}
 
-              {!isLogin && (
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
-                    placeholder="Confirm your password"
-                    required={!isLogin}
-                  />
-                </div>
-              )}
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
 
-              {/* Submit Button */}
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-2">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                        placeholder="Enter your password"
+                        required
+                      />
+                    </div>
+
+                    {!isLogin && (
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-2">
+                      Confirm Password
+                      </label>
+                      <input
+                      type="password"
+                      name="password2"
+                      value={formData.password2}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none transition-all"
+                      placeholder="Confirm your password"
+                      required
+                      />
+                    </div>
+                    )}
+
+                    {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full py-4 rounded-xl font-semibold text-lg

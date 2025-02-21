@@ -1,8 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import AllowAny
 from .models import Answers
-from .serializers import AnswersSerializers
+import json
+from .serializers import AnswersSerializers, UserSerializer, MyTokenObtainPairSerializer
 
 class PurityTestResponseViewSet(viewsets.ModelViewSet):
     queryset = Answers.objects.all()
@@ -26,3 +30,18 @@ class PurityTestResponseViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny] 
+
+    def post(self, request):
+        print("Raw Request Data:", json.dumps(request.data, indent=4))
+        serializer = UserSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print("Validation Errors:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

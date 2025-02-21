@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Questions from "./components/Questions";
-import Results from "./components/Results"
+import Results from "./components/Results";
 
 function App() {
   return (
