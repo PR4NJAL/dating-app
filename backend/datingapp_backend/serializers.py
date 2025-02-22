@@ -7,7 +7,8 @@ from .models import Answers
 class AnswersSerializers(serializers.ModelSerializer):
     class Meta:
         model = Answers
-        fields = ['id', 'created_at', 'answers', 'score'] 
+        fields = ['id', 'user', 'created_at', 'answers', 'score'] 
+        read_only_fields = ['user']
 
 User = get_user_model()
 

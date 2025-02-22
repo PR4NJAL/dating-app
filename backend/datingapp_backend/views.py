@@ -3,14 +3,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Answers
 import json
 from .serializers import AnswersSerializers, UserSerializer, MyTokenObtainPairSerializer
 
 class PurityTestResponseViewSet(viewsets.ModelViewSet):
-    queryset = Answers.objects.all()
     serializer_class = AnswersSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Answers.objects.filter(user=self.request.user)
     
     def create(self, request, *args, **kwargs):
         # Get the selected answers (question IDs)
@@ -22,12 +25,13 @@ class PurityTestResponseViewSet(viewsets.ModelViewSet):
         # Create response data
         response_data = {
             'answers': answers,
-            'score': score
+            'score': score,
+            'user': request.user.id
         }
         
         serializer = self.get_serializer(data=response_data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save(user = request.user)
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     

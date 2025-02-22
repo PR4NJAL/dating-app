@@ -161,6 +161,7 @@ export default function Questions() {
       await fetch("http://localhost:8000/api/datingapp_backend/", {
         method: "POST",
         headers: {
+          "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ answers: selectedItems })

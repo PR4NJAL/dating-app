@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import PurityTestResponseViewSet, MyTokenObtainPairView, RegisterView
 
 router = DefaultRouter()
-router.register(r'datingapp_backend', PurityTestResponseViewSet)
+router.register(r'datingapp_backend', PurityTestResponseViewSet, basename='datingapp_backend')
 
 urlpatterns = [
     path('api/', include(router.urls)),
