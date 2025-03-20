@@ -16,13 +16,10 @@ class PurityTestResponseViewSet(viewsets.ModelViewSet):
         return Answers.objects.filter(user=self.request.user)
     
     def create(self, request):
-        # Get the selected answers (question IDs)
         answers = request.data.get('answers', [])
         
-        # Calculate score (100 - number of selected items)
         score = 100 - len(answers)
         
-        # Create response data
         response_data = {
             'answers': answers,
             'score': score,
