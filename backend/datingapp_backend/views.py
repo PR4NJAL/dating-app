@@ -4,10 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
 from .models import Answers
 from .serializers import AnswersSerializers, UserSerializer, MyTokenObtainPairSerializer
-from .utils import get_top_matches
 import json
 
 class PurityTestResponseViewSet(viewsets.ModelViewSet):
@@ -17,7 +15,7 @@ class PurityTestResponseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Answers.objects.filter(user=self.request.user)
     
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
         # Get the selected answers (question IDs)
         answers = request.data.get('answers', [])
         
@@ -51,10 +49,3 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print("Validation Errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def top_matches(request):
-    user = request.user
-    matches = get_top_matches(user)
-    return Response(matches)
