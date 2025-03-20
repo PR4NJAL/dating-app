@@ -24,4 +24,4 @@ public
 Pipfile
 Pipfile.lock
 
-/backend/db.sqlite3
+backend/db.sqlite3
