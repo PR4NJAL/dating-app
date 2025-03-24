@@ -73,7 +73,7 @@ def calculate_similarity(request):
         similarity = calculate_cosine_similarity(current_user_array, other_user_array)
         similarity_scores.append((user_id, similarity))
 
-    top_5_similar = sorted(similarity_scores, key=lambda x: x[1], reverse=True])[:5]
+    top_5_similar = sorted(similarity_scores, key=lambda x: x[1], reverse=True)[:5]
     similar_users = []
     for user_id, similarity in top_5_similar:
         similar_users.append({
