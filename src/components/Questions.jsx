@@ -1,5 +1,6 @@
 import { useState, useContext, createContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { API } from "../ENV/apiRoutes";
 
 const CheckboxContext = createContext();
 
@@ -158,7 +159,7 @@ export default function Questions() {
     const score = 100 - selectedItems.length;
 
     try {
-      await fetch("http://localhost:8000/api/datingapp_backend/", {
+      await fetch(API.PURITY_TESTS, { //Get this from .env file
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("access_token")}`,

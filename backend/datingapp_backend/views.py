@@ -40,8 +40,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny] 
-
     def post(self, request):
         print("Raw Request Data:", json.dumps(request.data, indent=4))
         serializer = UserSerializer(data = request.data)
@@ -51,42 +49,39 @@ class RegisterView(APIView):
         print("Validation Errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@login_required
-@require_POST
-def calculate_similarity(request):
-    current_user = request.user
-    try:
-        current_user_response = Answers.objects.get(user=current_user).answers
-    except Answers.DoesNotExist:
-        return JsonResponse({"error": "User response not found."}, status=404)
+class SimilarityView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    all_responses = Answers.objects.exclude(user=current_user).value_list('user_id', 'answers')
+    def post(self, request):
+        current_user = request.user
+        try:
+            current_user_response = Answers.objects.get(user=current_user).answers
+        except Answers.DoesNotExist:
+            return Response({"error": "User response not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not all_responses:
-        return JsonResponse({"similar_users": []})
+        all_responses = Answers.objects.exclude(user=current_user).values_list('user_id', 'answers')
 
-    similarity_scores = []
-    current_user_array = np.array(current_user_response, dtype=bool).astype(int)
+        if not all_responses:
+            return Response({"similar_users": []})
 
-    for user_id, other_response in all_responses:
-        other_user_array = np.array(other_response, dtype=bool).astype(int)
-        similarity = calculate_cosine_similarity(current_user_array, other_user_array)
-        similarity_scores.append((user_id, similarity))
+        similarity_scores = []
+        current_user_array = np.array(current_user_response, dtype=bool).astype(int)
 
-    top_5_similar = sorted(similarity_scores, key=lambda x: x[1], reverse=True)[:5]
-    similar_users = []
-    for user_id, similarity in top_5_similar:
-        similar_users.append({
-            "user_id": user_id,
-            "similarity": similarity,
-            })
+        for user_id, other_response in all_responses:
+            other_user_array = np.array(other_response, dtype=bool).astype(int)
+            similarity = self.calculate_cosine_similarity(current_user_array, other_user_array)
+            similarity_scores.append((user_id, similarity))
 
-    return JsonResponse({"similar_users": similar_users})
+        top_5_similar = sorted(similarity_scores, key=lambda x: x[1], reverse=True)[:5]
 
-def calculate_cosine_similarity(vec1, vec2):
-    dot_product = np.dot(vec1, vec2)
-    magnitude_vec1 = np.linalg.norm(vec1)
-    magnitude_vec2 = np.linalg.norm(vec2)
-    if magnitude_vec1 == 0 or magnitude_vec2 == 0:
-        return 0
-    return dot_product / (magnitude_vec1 * magnitude_vec2)
+        similar_users = [{"user_id": user_id, "similarity": similarity} for user_id, similarity in top_5_similar]
+
+        return Response({"similar_users": similar_users})
+
+    def calculate_cosine_similarity(self, vec1, vec2):
+        dot_product = np.dot(vec1, vec2)
+        magnitude_vec1 = np.linalg.norm(vec1)
+        magnitude_vec2 = np.linalg.norm(vec2)
+        if magnitude_vec1 == 0 or magnitude_vec2 == 0:
+            return 0
+        return dot_product / (magnitude_vec1 * magnitude_vec2)

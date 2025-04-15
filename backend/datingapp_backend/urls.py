@@ -1,14 +1,15 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import PurityTestResponseViewSet, MyTokenObtainPairView, RegisterView
+from .views import PurityTestResponseViewSet, MyTokenObtainPairView, RegisterView, SimilarityView
 
 router = DefaultRouter()
-router.register(r'datingapp_backend', PurityTestResponseViewSet, basename='datingapp_backend')
+router.register(r'purity-tests', PurityTestResponseViewSet, basename='purity-tests')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('register/', RegisterView.as_view(), name='auth_register'),
-    path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', include(router.urls)),
+    path('auth/register/', RegisterView.as_view(), name='auth_register'),
+    path('auth/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('similarity', SimilarityView.as_view(), name='similarity_view'),
 ]

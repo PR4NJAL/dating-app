@@ -1,8 +1,8 @@
-const API_URL = "http://localhost:8000";
+import { API } from '../ENV/apiRoutes';
 
 const authService = {
     async login(email, password) {
-        const response = await fetch(`${API_URL}/token/`, {
+        const response = await fetch(API.LOGIN, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ const authService = {
     },
 
     async register(userData) {
-        const response = await fetch(`${API_URL}/register/`, {
+        const response = await fetch(API.REGISTER, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const authService = {
 
     async refreshToken() {
         const refresh_token = localStorage.getItem('refresh_token');
-        const response = await fetch(`${API_URL}/token/refresh/`, {
+        const response = await fetch(API.REFRESH, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

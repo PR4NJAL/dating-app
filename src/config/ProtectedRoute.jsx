@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { API } from '../ENV/apiRoutes';
 
 const ProtectedRoute = () => {
     const token = localStorage.getItem("access_token");
 
     const validateToken = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:8000/token/refresh/", {
+            const response = await fetch(API.REFRESH, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json" 
